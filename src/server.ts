@@ -53,6 +53,7 @@ const start = async () => {
     },
   })
 
+
   if (process.env.NEXT_BUILD) {
     app.listen(PORT, async () => {
       payload.logger.info(

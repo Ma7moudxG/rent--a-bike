@@ -7,6 +7,7 @@ import Cart from "./Cart"
 import { getServerSideUser } from "@/lib/payload-utils"
 import {cookies} from "next/headers"
 import UserAccountNav from "./UserAccountNav"
+import Image from "next/image"
 
 const Navbar = async () => {
     const nextCookies = cookies()
@@ -22,12 +23,16 @@ const Navbar = async () => {
                             {/* TODO: Mobile Nav */}
                             <div className="ml-4 flex lg:ml-0">
                                 <Link href="/">
-                                    <Icons.logo className="h-10 w-10"/>
+                                    {/* <Icons.logo className="h-10 w-10"/> */}
+                                    <Image src="/logo.png" alt="Logo" width={36} height={36}/>
                                 </Link>
+                                <h3 className="pl-8 flex text-center justify-center justify-items font-bold text-xl text-orange-500 my-0 ">
+                                    Rent A Bike
+                                </h3>
                             </div>
 
                             <div className="hidden z-50 lg:ml-8 lg:block lg:self-stretch">
-                                <NavItems />
+                                {/* <NavItems /> */}
                             </div>
 
                             <div className="ml-auto flex items-center">

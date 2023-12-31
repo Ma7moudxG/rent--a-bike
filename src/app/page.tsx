@@ -9,12 +9,12 @@ const perks = [
   {
     name: 'Instant Delivery', 
     Icon: ArrowDownToLine,
-    description: 'Get your assets delivered to your email in seconds'
+    description: 'Get your bike delivered to you in minutes'
   },
   {
     name: 'Guaranteed Quality', 
     Icon: CheckCircle,
-    description: 'All assets in our platform is verified'
+    description: 'All bikes in our platform is verified'
   },
   {
     name: 'For The Planet', 
@@ -32,11 +32,11 @@ export default function Home() {
           <h1 className='text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl'>
             Your marketplace for high-quality{' '} 
             <span className='text-orange-600'>
-              digital-assets
+              Bikes
             </span>.
           </h1>
           <p className='mt-6 text-lg max-w-prose text-muted-foreground'>
-            Welcome to DigitalHippo. Every asset is verified 
+            Welcome to Rent A Bike. Every bike is verified 
             by our team to ensure our highest quality standards.
           </p>
           <div className='flex flex-col sm:flex-row gap-4 mt-6'>
