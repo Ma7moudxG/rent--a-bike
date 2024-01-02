@@ -46,6 +46,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Products = void 0;
 var config_1 = require("../../config");
@@ -60,38 +69,104 @@ var addUser = function (_a) {
         });
     });
 };
+var syncUser = function (_a) {
+    var req = _a.req, doc = _a.doc;
+    return __awaiter(void 0, void 0, void 0, function () {
+        var fullUser, products, allIDs_1, createdProductIDs, dataToUpdate;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, req.payload.findByID({
+                        collection: 'users',
+                        id: req.user.id,
+                    })];
+                case 1:
+                    fullUser = _b.sent();
+                    if (!(fullUser && typeof fullUser === 'object')) return [3 /*break*/, 3];
+                    products = fullUser.products;
+                    allIDs_1 = __spreadArray([], ((products === null || products === void 0 ? void 0 : products.map(function (product) {
+                        return typeof product === 'object' ? product.id : product;
+                    })) || []), true);
+                    createdProductIDs = allIDs_1.filter(function (id, index) { return allIDs_1.indexOf(id) === index; });
+                    dataToUpdate = __spreadArray(__spreadArray([], createdProductIDs, true), [doc.id], false);
+                    return [4 /*yield*/, req.payload.update({
+                            collection: 'users',
+                            id: fullUser.id,
+                            data: {
+                                products: dataToUpdate,
+                            },
+                        })];
+                case 2:
+                    _b.sent();
+                    _b.label = 3;
+                case 3: return [2 /*return*/];
+            }
+        });
+    });
+};
+var isAdminOrHasAccess = function () {
+    return function (_a) {
+        var _user = _a.req.user;
+        var user = _user;
+        if (!user)
+            return false;
+        if (user.role === 'admin')
+            return true;
+        var userProductIDs = (user.products || []).reduce(function (acc, product) {
+            if (!product)
+                return acc;
+            if (typeof product === 'string') {
+                acc.push(product);
+            }
+            else {
+                acc.push(product.id);
+            }
+            return acc;
+        }, []);
+        return {
+            id: {
+                in: userProductIDs,
+            },
+        };
+    };
+};
 exports.Products = {
-    slug: "products",
+    slug: 'products',
     admin: {
-        useAsTitle: 'name'
+        useAsTitle: 'name',
     },
-    access: {},
+    access: {
+        read: isAdminOrHasAccess(),
+        update: isAdminOrHasAccess(),
+        delete: isAdminOrHasAccess(),
+    },
     hooks: {
+        afterChange: [syncUser],
         beforeChange: [
-            addUser, function (args) { return __awaiter(void 0, void 0, void 0, function () {
+            addUser,
+            function (args) { return __awaiter(void 0, void 0, void 0, function () {
                 var data, createdProduct, updated, data, updatedProduct, updated;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            if (!(args.operation === "create")) return [3 /*break*/, 2];
+                            if (!(args.operation === 'create')) return [3 /*break*/, 2];
                             data = args.data;
                             return [4 /*yield*/, stripe_1.stripe.products.create({
                                     name: data.name,
                                     default_price_data: {
                                         currency: 'USD',
-                                        unit_amount: Math.round(data.price * 100)
-                                    }
+                                        unit_amount: Math.round(data.price * 100),
+                                    },
                                 })];
                         case 1:
                             createdProduct = _a.sent();
                             updated = __assign(__assign({}, data), { stripeId: createdProduct.id, priceId: createdProduct.default_price });
                             return [2 /*return*/, updated];
                         case 2:
-                            if (!(args.operation === "update")) return [3 /*break*/, 4];
+                            if (!(args.operation === 'update')) return [3 /*break*/, 4];
                             data = args.data;
                             return [4 /*yield*/, stripe_1.stripe.products.update(data.stripeId, {
                                     name: data.name,
-                                    default_price: data.priceId
+                                    default_price: data.priceId,
                                 })];
                         case 3:
                             updatedProduct = _a.sent();
@@ -100,34 +175,34 @@ exports.Products = {
                         case 4: return [2 /*return*/];
                     }
                 });
-            }); }
-        ]
+            }); },
+        ],
     },
     fields: [
         {
-            name: "user",
-            type: "relationship",
-            relationTo: "users",
+            name: 'user',
+            type: 'relationship',
+            relationTo: 'users',
             required: true,
             hasMany: false,
             admin: {
-                condition: function () { return false; }
-            }
+                condition: function () { return false; },
+            },
         },
         {
-            name: "name",
-            label: "Name",
+            name: 'name',
+            label: 'Name',
             type: 'text',
             required: true,
         },
         {
-            name: "description",
-            type: "textarea",
-            label: "Product details",
+            name: 'description',
+            type: 'textarea',
+            label: 'Product details',
         },
         {
-            name: "price",
-            label: "Price in USD",
+            name: 'price',
+            label: 'Price in USD',
             min: 0,
             max: 1000,
             type: 'number',
@@ -144,45 +219,45 @@ exports.Products = {
             required: true,
         },
         {
-            name: "product_files",
-            label: "Product file(s)",
-            type: "relationship",
+            name: 'product_files',
+            label: 'Product file(s)',
+            type: 'relationship',
             required: true,
-            relationTo: "product_files",
+            relationTo: 'product_files',
             hasMany: false,
         },
         {
-            name: "approvedForSale",
-            label: "Product Status",
-            type: "select",
-            defaultValue: "pending",
+            name: 'approvedForSale',
+            label: 'Product Status',
+            type: 'select',
+            defaultValue: 'pending',
             access: {
                 create: function (_a) {
                     var req = _a.req;
-                    return req.user.role === "admin";
+                    return req.user.role === 'admin';
                 },
                 read: function (_a) {
                     var req = _a.req;
-                    return req.user.role === "admin";
+                    return req.user.role === 'admin';
                 },
                 update: function (_a) {
                     var req = _a.req;
-                    return req.user.role === "admin";
+                    return req.user.role === 'admin';
                 },
             },
             options: [
                 {
-                    label: "Pending verification",
-                    value: "pending",
+                    label: 'Pending verification',
+                    value: 'pending',
                 },
                 {
-                    label: "Approved",
-                    value: 'approved'
+                    label: 'Approved',
+                    value: 'approved',
                 },
                 {
                     label: 'Denied',
                     value: 'denied',
-                }
+                },
             ],
         },
         {
@@ -192,10 +267,10 @@ exports.Products = {
                 read: function () { return false; },
                 update: function () { return false; },
             },
-            type: "text",
+            type: 'text',
             admin: {
                 hidden: true,
-            }
+            },
         },
         {
             name: 'stripeId',
@@ -204,28 +279,28 @@ exports.Products = {
                 read: function () { return false; },
                 update: function () { return false; },
             },
-            type: "text",
+            type: 'text',
             admin: {
                 hidden: true,
-            }
+            },
         },
         {
-            name: "images",
-            type: "array",
-            label: "Product images",
+            name: 'images',
+            type: 'array',
+            label: 'Product images',
             minRows: 1,
             maxRows: 4,
             required: true,
             labels: {
-                singular: "Image",
-                plural: "Images",
+                singular: 'Image',
+                plural: 'Images',
             },
             fields: [
                 {
-                    name: "image",
-                    type: "upload",
-                    relationTo: "media",
-                    required: true
+                    name: 'image',
+                    type: 'upload',
+                    relationTo: 'media',
+                    required: true,
                 },
             ],
         },
