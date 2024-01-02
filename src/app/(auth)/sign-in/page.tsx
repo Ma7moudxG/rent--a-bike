@@ -47,6 +47,7 @@ const Page = () => {
 
                 if(origin){
                     router.push(`/${origin}`)
+                    router.refresh()
                     return
                 }
 
@@ -56,6 +57,7 @@ const Page = () => {
                 }
 
                 router.push('/')
+                router.refresh()
             },
 
             onError: (err) => {
