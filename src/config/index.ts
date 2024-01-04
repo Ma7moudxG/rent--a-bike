@@ -4,9 +4,9 @@ export const PRODUCT_CATEGORIES = [
         value: 'street_bikes' as const,
         featured: [
             {
-                name: "Editor picks ",
-                href: '/',
-                imageSrc: '/nav/ui-kits/mixed.jpg'
+                name: "Gray Bike ",
+                href: '/grey bike-1.jpg',
+                imageSrc: '/grey bike-1.jpg'
             },
             {
                 name: "New Arrivals ",
