@@ -60,7 +60,7 @@ const MobileNav = () => {
               </button>
             </div>
 
-            <div className='mt-2'>
+            {/* <div className='mt-2'>
               <ul>
                 {PRODUCT_CATEGORIES.map((category) => (
                   <li
@@ -98,7 +98,7 @@ const MobileNav = () => {
                   </li>
                 ))}
               </ul>
-            </div>
+            </div> */}
 
             <div className='space-y-6 border-t border-gray-200 px-4 py-6'>
               <div className='flow-root'>
