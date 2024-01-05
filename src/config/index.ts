@@ -5,8 +5,8 @@ export const PRODUCT_CATEGORIES = [
         featured: [
             {
                 name: "Gray Bike ",
-                href: '/grey bike-1.jpg',
-                imageSrc: '/grey bike-1.jpg'
+                href: '/',
+                imageSrc: '/nav/street-bikes/grey bike-1.jpg'
             },
             {
                 name: "New Arrivals ",
